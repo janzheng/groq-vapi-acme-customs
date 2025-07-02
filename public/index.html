@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACME Customs | Custom Miata Shop</title>
+    <!-- Share Card -->
+    <meta property="og:image" content="https://f2.phage.directory/capsid/64WqJMHP/acme-customs.png">
+    <meta property="twitter:image" content="https://f2.phage.directory/capsid/64WqJMHP/acme-customs.png">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- VAPI dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@daily-co/daily-js@0.79.0/dist/daily.min.js"></script>
+    <script>{{VAPI_CODE}}</script>
+    
+    <style>
+        :root {
+            --bg-color: #080A0A; 
+            --text-color: #E0F5F5;
+            --text-color-dark: #111111;
+            --text-color-white: #FFFFFF;
+            --text-secondary-color: #A0BDBD;
+            --border-color: #1A2D2D;
+
+            --hero-panel-bg: #A44A42;
+            --controls-panel-bg: #E1A15E;
+            --transcript-panel-bg: #66896400;
+            --data-panel-bg: #22323b;
+            --data-panel-text: #468697;
+            
+            --hero-panel-text: var(--text-color-dark);
+            --controls-panel-text: var(--text-color-dark);
+
+            --accent-orange: #E1A15E;
+            --controls-panel-header: var(--text-color-dark);
+            --transcript-panel-header: var(--text-color);
+            --data-panel-header: var(--text-color);
+
+            --button-initiate-bg: #3b6e9e;
+            --button-primary-bg: var(--accent-orange);
+            --button-primary-text: var(--text-color-dark);
+            --button-secondary-bg: #4A5560;
+            --button-secondary-text: var(--text-color);
+            --button-disabled-bg: #303840;
+
+            --input-bg: #10151A;
+            --input-border: var(--border-color);
+            --decorative-border-black: rgba(0,0,0,0.6); 
+
+            --status-dot-idle: #606060;
+            --status-dot-connecting: var(--accent-orange);
+            --status-dot-started: #34C759; 
+            --status-dot-ended: #D84727; 
+
+            --font-family-main: 'Space Grotesk', sans-serif;
+            --font-weight-light: 300;
+            --font-weight-regular: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            --comm-log-bg: #1a2a1a;
+            --comm-log-text: #668964;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        a {
+          text-decoration: underline !important;
+        }
+        
+        body {
+            font-family: var(--font-family-main);
+            font-weight: var(--font-weight-regular);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.6;
+            letter-spacing: 0.01em;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        footer {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+
+        .micro-header {
+            font-family: var(--font-family-main);
+            font-weight: var(--font-weight-light);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.35rem;
+            display: block; 
+            position: relative;
+            padding-left: 1.2em; 
+        }
+        .micro-header::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 0.3em solid transparent;
+            border-bottom: 0.3em solid transparent;
+            border-left: 0.45em solid currentColor;
+        }
+        
+        .page-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1400px;
+            margin: auto;
+            align-items: stretch;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+        }
+
+        @media (max-width: 800px) {
+            .page-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                max-width: 100vw;
+            }
+            .left-column,
+            .right-column {
+                min-width: 0;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                height: auto;
+            }
+            .hero-image-box {
+                height: 180px;
+            }
+            .log-data-wrapper {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                height: auto;
+                min-height: 0;
+            }
+            .transcript-panel,
+            .data-panel {
+                flex: unset;
+                min-height: 140px;
+                max-height: none;
+                width: 100%;
+            }
+            .panel-card {
+                padding: 1rem 0.5rem;
+            }
+        }
+
+        .hero-panel {
+            flex: 1 1 0%;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .hero-image-box {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+            padding: 0;
+            display: flex;
+            align-items: stretch;
+            justify-content: stretch;
+            overflow: hidden;
+            width: 100%;
+            height: 640px;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            border-radius: 0;
+            box-shadow: none;
+            display: block;
+        }
+
+        .hero-text-box {
+            border: 2px solid var(--hero-panel-bg);
+            color: var(--hero-panel-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex-grow: 1;
+        }
+
+        .hero-text-box .micro-header { 
+            color: var(--hero-panel-bg);
+        }
+
+        .hero-details-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        .hero-panel h1 {
+            font-weight: var(--font-weight-semibold);
+            font-size: 2.6rem; 
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            color: var(--hero-panel-bg);
+            display: flex; 
+            align-items: center;
+        }
+        .title-dot {
+            display: inline-block;
+            width: 0.4em; 
+            height: 0.4em;
+            background-color: var(--hero-panel-bg);
+            border-radius: 50%;
+            margin-left: 0.4em;
+        }
+
+        .hero-panel p.subtitle {
+            font-weight: var(--font-weight-regular);
+            font-size: 1.65rem; 
+            color: var(--hero-panel-bg);
+            opacity: 0.85; 
+            max-width: 100%; 
+            margin-bottom: 1rem;
+        }
+
+        .main-content-panel {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .log-data-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            align-items: stretch;
+            height: 640px;
+        }
+
+        @media (max-width: 1200px and min-width: 800px) {
+            .page-wrapper {
+                grid-template-columns: 1fr 1fr;
+            }
+            .right-column {
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+                height: 100%;
+            }
+            .log-data-wrapper {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                flex: 1 1 0%;
+                min-height: 0;
+                height: 100%;
+            }
+            .transcript-panel,
+            .data-panel {
+                flex: 1 1 0%;
+                min-height: 0;
+                max-height: none;
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .log-data-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .transcript-panel,
+        .data-panel {
+            display: flex;
+            flex-direction: column;
+            min-height: 320px;
+            max-height: 640px;
+            overflow: hidden;
+            height: 100%;
+            min-height: 0;
+            max-height: none;
+        }
+
+        .transcript {
+            flex-grow: 1;
+            min-height: 0;
+            max-height: none;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .json-stream pre {
+            max-height: 340px;
+            overflow-y: auto;
+            min-width: 0;
+            word-break: break-all;
+            background: transparent;
+            margin: 0;
+            padding: 0.5rem 0 0 0.5rem;
+            border: none;
+            line-height: 1.3;
+            letter-spacing: 0.01em;
+            white-space: pre;
+            user-select: text;
+            box-sizing: border-box;
+        }
+
+        .panel-card {
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .log-data-wrapper > .panel-card {
+            flex: 1; 
+        }
+
+        .controls-panel {
+            background-color: var(--controls-panel-bg);
+            color: var(--controls-panel-text);
+            margin-bottom: 1.5rem;
+        }
+        .controls-panel .micro-header {
+            color: var(--controls-panel-text);
+            opacity: 0.8;
+        }
+
+        .transcript-panel {
+            background-color: var(--comm-log-bg);
+            color: var(--comm-log-text);
+        }
+        .transcript-panel .micro-header {
+            color: var(--comm-log-text);
+            opacity: 0.8;
+        }
+        .data-panel {
+            background-color: var(--data-panel-bg);
+            color: var(--data-panel-text);
+        }
+         .data-panel .micro-header {
+            color: var(--data-panel-text);
+            opacity: 0.8;
+        }
+        
+        .panel-card h2 {
+            font-weight: var(--font-weight-medium);
+            font-size: 1.4rem; 
+            margin-bottom: 1rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+        .controls-panel h2 { color: var(--controls-panel-header); }
+        .transcript-panel h2 { color: var(--comm-log-text); }
+        .data-panel h2 { color: var(--data-panel-text); }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .controls button {
+            font-family: var(--font-family-main); 
+            font-weight: var(--font-weight-medium);
+            border: 1px solid transparent; 
+            padding: 1rem 1.8rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+            flex-grow: 1;
+        }
+        
+        .controls button.btn-initiate {
+            background-color: var(--button-initiate-bg);
+            color: var(--text-color-white);
+            padding-top: 1.2rem;
+            padding-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .controls button.btn-initiate:hover:not(:disabled) {
+            box-shadow: 0 6px 12px rgba(var(--button-initiate-bg), 0.5);
+            border-color: var(--text-color-white);
+        }
+
+        .controls button.secondary {
+             background-color: var(--button-secondary-bg);
+             color: var(--button-secondary-text);
+        }
+        .controls button:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+        }
+        .controls button:disabled {
+            background-color: var(--button-disabled-bg);
+            color: var(--text-secondary-color);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            border-color: transparent;
+        }
+         .controls button.secondary:hover:not(:disabled) {
+            border-color: var(--text-color);
+             box-shadow: 0 5px 10px rgba(var(--button-secondary-bg),0.4);
+        }
+        
+        .status-indicator-wrapper {
+            margin-top: auto; 
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: var(--font-weight-regular);
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+        .controls-panel .status-dot {
+             border: 1px solid rgba(0,0,0,0.2);
+        }
+        
+        .status-dot.idle { background-color: var(--status-dot-idle); }
+        .status-dot.connecting { background-color: var(--status-dot-connecting); animation: pulse 1.5s infinite; }
+        .status-dot.started { background-color: var(--status-dot-started); }
+        .status-dot.ended { background-color: var(--status-dot-ended); }
+        
+        .json-stream pre, .json-stream span {
+            font-family: 'Space Mono', 'Fira Mono', 'Menlo', 'Consolas', monospace;
+            font-size: 0.75rem;
+            font-weight: 300;
+            color: #A0FFB3;
+            background: transparent;
+            margin: 0;
+            padding: 0.5rem 0 0 0.5rem;
+            border: none;
+            line-height: 1.3;
+            letter-spacing: 0.01em;
+            white-space: pre;
+            overflow: hidden;
+            overflow-y: scroll;
+            text-overflow: ellipsis;
+            max-height: 100%;
+            max-width: 100%;
+            user-select: text;
+            box-sizing: border-box;
+            word-break: break-all;
+        }
+        .blinking-cursor {
+            display: inline-block;
+            width: 0.7ch;
+            color: #A0FFB3;
+            animation: blink 1s steps(1) infinite;
+            font-weight: 400;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .cyber-marquee-wrapper {
+            width: 100%;
+            height: 2.6rem;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            background: rgba(20, 30, 40, 0.82);
+            border: 1.5px solid #0fffc1;
+            box-shadow: 0 0 6px #0fffc144, 0 0 12px #ff4a6b22;
+            position: relative;
+            box-sizing: border-box;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+        .cyber-marquee {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            will-change: transform;
+            animation: cyber-marquee-scroll 7s linear infinite;
+        }
+        .cyber-marquee span {
+            font-family: 'Space Grotesk', 'Orbitron', 'monospace', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: #0fffc1;
+            text-shadow:
+                0 0 2px #0fffc1,
+                0 0 6px #ff4a6b55;
+            padding-right: 0.5em;
+            text-transform: uppercase;
+            line-height: 2.6rem;
+        }
+        @keyframes cyber-marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .cyber-marquee-top-wrapper {
+            width: 100%;
+            position: relative;
+            height: 2.6rem;
+            overflow: hidden;
+            background: rgba(20, 30, 40, 0.82);
+            border-bottom: 2px solid #0fffc1;
+            box-shadow: 0 2px 12px #0fffc122, 0 0 12px #ff4a6b22;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .cyber-marquee {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            will-change: transform;
+            animation: cyber-marquee-scroll 7s linear infinite;
+            min-width: 200%;
+        }
+        .cyber-marquee span {
+            font-family: 'Space Grotesk', 'Orbitron', 'monospace', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: #0fffc1;
+            text-shadow:
+                0 0 2px #0fffc1,
+                0 0 6px #ff4a6b55;
+            padding-right: 0.5em;
+            text-transform: uppercase;
+            line-height: 2.6rem;
+        }
+        @keyframes cyber-marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+    </style>
+</head>
+<body x-data="vapiCustomsDemo">
+    <div class="main-container">
+        <div class="cyber-marquee-top-wrapper">
+            <div class="cyber-marquee">
+                <span>ASK US ABOUT OUR MIATA COLLECTION //</span>
+                <span>ASK US ABOUT OUR MIATA COLLECTION //</span>
+                <span>ASK US ABOUT OUR MIATA COLLECTION //</span>
+                <span>ASK US ABOUT OUR MIATA COLLECTION //</span>
+            </div>
+        </div>
+        <div class="page-wrapper">
+            <div class="left-column">
+                <div class="hero-panel">
+                    <div class="hero-image-box">
+                        <img src="https://f2.phage.directory/capsid/wSbjGXL8/acme-customs-square_large.jpg" alt="ACME Customs Hero" class="hero-image">
+                    </div>
+                    <div class="hero-text-box">
+                        <div class="hero-details-container">
+                          <p class="subtitle">Precision Performance & Custom Builds. <br>Your vision, our engineering.</p>
+                          <span class="micro-header bottom-micro-header">SPEC CLASSIFICATION: // TRACK-READY // AERO-OPTIMIZED</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="red-panel">
+                    <!-- red panel content here -->
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="controls-panel panel-card">
+                    <div class="controls-panel-header-row">
+                        <span class="micro-header">COMMAND INTERFACE // V2.5 REV.3</span>
+                        <div class="decorative-circles">
+                            <span class="circle open"></span>
+                            <span class="circle half"></span>
+                            <span class="circle filled"></span>
+                        </div>
+                    </div>
+                    <h2>System Interface</h2>
+                    <div class="controls">
+                        <button 
+                            class="btn-initiate"
+                            @click="startCall()" 
+                            :disabled="callStatus === 'started' || callStatus === 'connecting'"
+                            :class="{ 'highlight': callStatus === 'idle' && ! (callStatus === 'started' || callStatus === 'connecting') }"
+                        >
+                            Initiate Consultation
+                        </button>
+                        <button 
+                            class="secondary"
+                            @click="stopCall()" 
+                            :disabled="callStatus !== 'started'"
+                        >
+                            Terminate Link
+                        </button>
+                    </div>
+                    <div class="status-indicator-wrapper">
+                        <span class="micro-header">CONNECTION STATUS:</span>
+                        <div class="status-indicator">
+                            <div class="status-dot" :class="callStatus"></div>
+                            <span x-text="getStatusText()">Status: Idle</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="log-data-wrapper"> 
+                    <div class="transcript-panel panel-card">
+                        <span class="micro-header">AUDIO LOG // ENCRYPTION: AES-256</span>
+                        <h2>Communication Log</h2>
+                        <div class="transcript">
+                            <p :class="{'transcript-default-text': transcriptText.startsWith('Awaiting connection...')}" x-html="transcriptText.replace(/\\n/g, '<br>') || 'Awaiting connection... Stand by for vehicle consultation.'"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="data-panel panel-card">
+                        <span class="micro-header">TELEMETRY DATA // LIVE STREAM</span>
+                        <h2>Extracted Data</h2>
+                        <div class="json-stream" x-show="Object.keys(extractedData).length > 0">
+                            <pre>
+<span x-text="formatExtractedDataAsJson(extractedData)"></span><span class="blinking-cursor">█</span>
+                            </pre>
+                        </div>
+                        <div class="data-matrix-placeholder" x-show="Object.keys(extractedData).length === 0">
+                            <p x-show="(callStatus === 'started' || callStatus === 'ended')">No extracted data identified in current session.</p>
+                            <p x-show="callStatus === 'idle'">Data matrix will populate post-consultation analysis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="decorative-circles">
+            <span class="circle open"></span>
+            <span class="circle half"></span>
+            <span class="circle filled"></span>
+        </div>
+        <span class="micro-header">ACME CYBERNETICS // PROTOCOL OMEGA // SECTOR 7G</span>
+        <div class="footer-text">ACME Customs © 2024 // Advanced Cybernetic Modification Engineering</div>
+        <div class="footer-text">Powered by <a href="https://groq.com" target="_blank">Groq</a> and <a href="https://vapi.ai" target="_blank">Vapi</a>. <a href="https://www.val.town/x/yawnxyz/acme-customs" target="_blank">Source code</a></div>
+    </footer>
+
+    <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('vapiCustomsDemo', () => ({
+            vapi: null,
+            callStatus: 'idle',
+            assistantIsSpeaking: false,
+            userIsSpeaking: false,
+            transcriptText: 'Awaiting connection... Stand by for vehicle consultation.', 
+            extractedData: {},
+            vapiPublicKey: '872dea2d-4afc-4ab4-b871-5797fdb1397e', 
+            assistantId: '458bb70e-cc52-4122-9f3d-b260a6220830',
+
+            init() {
+                if (typeof window.Vapi === 'undefined') {
+                    console.error('VAPI SDK not loaded. Ensure VAPI script is included and loaded.');
+                    alert('Critical system error: VAPI SDK failed to initialize.');
+                    return;
+                }
+                
+                try {
+                    this.vapi = new window.Vapi(this.vapiPublicKey);
+                    this.setupVapiEventHandlers();
+                    console.log('VAPI System Initialized. Standby.');
+                    this.extractedData = {};
+                } catch (error) {
+                    console.error('Error initializing Vapi:', error);
+                    alert('VAPI initialization failed: ' + error.message);
+                }
+            },
+
+            setupVapiEventHandlers() {
+                if (!this.vapi) return;
+
+                this.vapi.on('call-start', () => {
+                    console.log('Call initiated.');
+                    this.callStatus = 'started';
+                    this.transcriptText = '';
+                    this.extractedData = {};
+                });
+
+                this.vapi.on('call-end', () => {
+                    console.log('Call terminated.');
+                    this.callStatus = 'ended';
+                    this.assistantIsSpeaking = false;
+                    this.userIsSpeaking = false;
+                });
+
+                this.vapi.on('speech-start', () => {
+                    this.assistantIsSpeaking = true;
+                });
+
+                this.vapi.on('speech-end', () => {
+                    this.assistantIsSpeaking = false;
+                });
+                
+                this.vapi.on('user-speech-start', () => {
+                    this.userIsSpeaking = true;
+                });
+
+                this.vapi.on('user-speech-end', () => {
+                     this.userIsSpeaking = false;
+                });
+
+                this.vapi.on('message', (msg) => {
+                    if (msg.type === 'transcript') {
+                        const speaker = msg.role === 'user' ? 'USER: ' : 'CONSULTANT: ';
+                        if (msg.transcriptType === 'partial') {
+                            let baseText = this.getMostRecentFinalTranscript();
+                            if (this.transcriptText.endsWith('\\n') || this.transcriptText === '') {
+                                baseText += speaker;
+                            }
+                            this.transcriptText = baseText + msg.transcript + '...';
+                        } else if (msg.transcriptType === 'final') {
+                            let textToReplace = speaker + msg.transcript + '...';
+                            if (this.transcriptText.endsWith(textToReplace)) {
+                               this.transcriptText = this.transcriptText.slice(0, -textToReplace.length);
+                            } else if (this.transcriptText.endsWith('...')) {
+                                const lastNewLine = this.transcriptText.lastIndexOf('\\n');
+                                const lastContent = lastNewLine === -1 ? '' : this.transcriptText.substring(0, lastNewLine + 1);
+                                this.transcriptText = lastContent;
+                            }
+                            this.transcriptText += speaker + msg.transcript + '\\n';
+                        }
+                        this.extractDataFromTranscript();
+                    }
+                });
+
+                this.vapi.on('error', (error) => {
+                    console.error('VAPI Error:', error);
+                    this.callStatus = 'idle';
+                    alert('An error occurred during the call: ' + error.message);
+                });
+            },
+            
+            getStatusText() {
+                const statusMap = {
+                    'idle': 'Awaiting Connection',
+                    'connecting': 'Establishing Link...',
+                    'started': 'Link Active',
+                    'ended': 'Link Terminated'
+                };
+                let text = statusMap[this.callStatus] || this.callStatus;
+                if (this.callStatus === 'started') {
+                    if (this.assistantIsSpeaking) text += ' (Consultant Speaking)';
+                    else if (this.userIsSpeaking) text += ' (User Speaking)';
+                }
+                return text;
+            },
+
+            getMostRecentFinalTranscript() {
+                const lines = this.transcriptText.split('\\n');
+                let finalTranscript = '';
+                for (let i = 0; i < lines.length; i++) {
+                    if (lines[i] !== '' && !lines[i].endsWith('...')) {
+                        finalTranscript += lines[i] + '\\n';
+                    } else if (lines[i].endsWith('...')) {
+                        const lastSpeakerLine = lines[i].lastIndexOf("USER: ") > -1 ? lines[i].lastIndexOf("USER: ") : lines[i].lastIndexOf("CONSULTANT: ");
+                        if (lastSpeakerLine > -1) {
+                            finalTranscript += lines[i].substring(0, lastSpeakerLine);
+                        }
+                        break; 
+                    }
+                }
+                return finalTranscript;
+            },
+
+            async startCall() {
+                if (!this.vapi) {
+                    alert('VAPI system not ready. Please wait or refresh.');
+                    return;
+                }
+
+                this.callStatus = 'connecting';
+                this.transcriptText = '';
+                this.extractedData = {};
+                try {
+                    await this.vapi.start(this.assistantId);
+                } catch (error) {
+                    console.error('Error starting call:', error);
+                    this.callStatus = 'idle';
+                    alert('Failed to initiate call: ' + error.message);
+                }
+            },
+
+            async stopCall() {
+                if (!this.vapi || this.callStatus === 'ended' || this.callStatus === 'idle') return;
+                try {
+                    await this.vapi.stop();
+                    this.callStatus = 'ended';
+                } catch (error) {
+                    console.error('Error stopping call:', error);
+                }
+            },
+
+            async extractDataFromTranscript() {
+                if (!this.transcriptText || this.transcriptText.startsWith('Awaiting connection')) return;
+                try {
+                    const res = await fetch("/extract-data", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ 
+                            transcript: this.transcriptText,
+                            extractedDataSoFar: this.extractedData
+                        })
+                    });
+                    const data = await res.json();
+                    if (data && typeof data.specs === "object" && !Array.isArray(data.specs)) {
+                        this.extractedData = data.specs;
+                    }
+                } catch (e) {
+                    // Optionally handle error
+                }
+            },
+
+            formatExtractedDataAsJson(data) {
+                return JSON.stringify(data, null, 2);
+            }
+        }))
+    })
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</body>
+</html> 

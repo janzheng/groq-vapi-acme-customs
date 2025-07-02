@@ -1,0 +1,23 @@
+{
+  "name": "groq-vapi-acme-customs",
+  "version": "1.0.0",
+  "description": "ACME Customs - Custom Miata Shop with Groq and Vapi integration",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.12.0",
+    "hono": "^4.6.2",
+    "groq-sdk": "^0.7.0",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["hono", "groq", "vapi", "miata", "customs"],
+  "author": "",
+  "license": "MIT"
+} 
